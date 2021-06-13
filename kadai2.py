@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 #===============================================================================
 # Date created  : 2021-06-13T09:20:40+09:00
-# Date modified : 2021-06-13T10:22:40+09:00
+# Date modified : 2021-06-13T13:07:41+09:00
 # Author        : soundscope
 # Description   : demo code zemi-A, This code is released under MIT
 #===============================================================================
@@ -28,9 +28,31 @@ def distance(x1,y1,x2,y2): return (x1 - x2) ** 2 + (y1 - y2) ** 2
 new_contours = []
 for cnt in contours:
     x,y,_ = originalImg.shape
+    tmp_cp = originalImg.copy()
+    imagearray = np.zeros((tmp_cp.shape[0],tmp_cp.shape[1],tmp_cp.shape[2]),np.uint8)
+    cv2.drawContours(imagearray, [cnt], 0, (255,255,255), 3)
+    cv2.drawContours(tmp_cp, [cnt], 0, (0), 3)
+    _gray = cv2.cvtColor(imagearray, cv2.COLOR_BGR2GRAY)
+    c, _ = cv2.findContours(_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    c = sorted(c, key = lambda x:cv2.contourArea(x))[::-1][0]
     epsilon = 0.02*cv2.arcLength(cnt,True)
     approx = cv2.approxPolyDP(cnt,epsilon,True)
     approx = cv2.convexHull(approx)
+
+    if cv2.contourArea(approx) == 0: continue
+    areaRatio = cv2.contourArea(c)/cv2.contourArea(approx)
+
+    tmp_cp = originalImg.copy()
+    cv2.drawContours(tmp_cp, [approx], 0, (0), 2)
+    cv2.imwrite('debug'+ importedImage + str(index) + '.png', tmp_cp)
+    cv2.imshow("win2", tmp_cp)
+    key = cv2.waitKey(0)
+    #print("------------------")
+    #print("area ratio:",end = '')
+    #print(areaRatio)
+    #print(cv2.contourArea(c))
+    #print(cv2.contourArea(approx))
+    if areaRatio < 0.95: continue
     new_contours.append(approx)
 
 contours = sorted(new_contours, key = lambda x:cv2.contourArea(x))[::-1][:candidate_num]

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 #===============================================================================
 # Date created  : 2021-06-13T09:20:40+09:00
-# Date modified : 2021-06-13T13:07:41+09:00
+# Date modified : 2021-06-13T13:25:37+09:00
 # Author        : soundscope
 # Description   : demo code zemi-A, This code is released under MIT
 #===============================================================================
@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from math import *
 
-importedImage = 'testX.png'
+importedImage = 'testf.png'
 originalImg = cv2.imread(importedImage)
 kernel = np.ones((3,3),np.uint8)
 #erosion = cv2.erode(originalImg,kernel,iterations = 1)
